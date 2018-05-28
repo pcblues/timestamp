@@ -4,6 +4,7 @@
 // init project
 const express = require('express')
 const app = express()
+const moment = require('moment')
 
 // we've started you off with Express, 
 // but feel free to use whatever libs or frameworks you'd like through `package.json`.
@@ -13,7 +14,26 @@ app.use(express.static('public'))
 
 // http://expressjs.com/en/starter/basic-routing.html
 app.get("/", (request, response) => {
-  response.sendFile(__dirname + '/views/index.html')
+  var str=request.query
+  var dateStr=Object.keys(str)[0]
+  var newIntDate = new Date(parseInt(dateStr))
+  var newStrDate = Date.parse(dateStr)
+  var unixTime = null
+  var naturalTime = null
+  if (isNaN(newIntDate)==false) {
+    unixTime = newIntDate.getTime()
+    naturalTime = moment(new Date(newIntDate)).format('MMMM Do YYYY')
+  } else if(isNaN(newStrDate)==false) {
+    unixTime = new Date(newStrDate).getTime()
+    naturalTime = moment(new Date(newStrDate)).format('MMMM Do YYYY') 
+  }
+    
+  var resp={}
+  resp.unix=unixTime
+  resp.natural=naturalTime
+  var jresp = JSON.stringify(resp)
+  response.send(jresp)
+  //response.send(newDate)
 })
 
 // Simple in-memory store
